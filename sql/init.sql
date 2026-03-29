@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS articles (
   image            VARCHAR(255),
   alt_image        VARCHAR(255),
   date_publication DATETIME DEFAULT CURRENT_TIMESTAMP,
-  statut           ENUM('publie','brouillon') DEFAULT 'brouillon',
+  statut           ENUM('publie','brouillon','planifie') DEFAULT 'brouillon',
   categorie_id     INT,
   user_id          INT,
   created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,

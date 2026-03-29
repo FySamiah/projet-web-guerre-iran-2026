@@ -233,19 +233,20 @@ function createArticle(array $data): bool {
     $st = $pdo->prepare(
         "INSERT INTO articles
          (titre, slug, contenu, resume, image, alt_image,
-          categorie_id, user_id, statut)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          categorie_id, user_id, statut, date_publication)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     return $st->execute([
         $data['titre'],
         $data['slug'],
         $data['contenu'],
-        $data['resume']      ?? '',
-        $data['image']       ?? null,
-        $data['alt_image']   ?? '',
+        $data['resume']           ?? '',
+        $data['image']            ?? null,
+        $data['alt_image']        ?? '',
         $data['categorie_id'],
         $data['user_id'],
         $data['statut'],
+        $data['date_publication'] ?? date('Y-m-d H:i:s'),
     ]);
 }
 
@@ -254,18 +255,19 @@ function updateArticle(int $id, array $data): bool {
     $st = $pdo->prepare(
         "UPDATE articles
          SET titre = ?, slug = ?, contenu = ?, resume = ?,
-             image = ?, alt_image = ?, categorie_id = ?, statut = ?
+             image = ?, alt_image = ?, categorie_id = ?, statut = ?, date_publication = ?
          WHERE id = ?"
     );
     return $st->execute([
         $data['titre'],
         $data['slug'],
         $data['contenu'],
-        $data['resume']      ?? '',
-        $data['image']       ?? null,
-        $data['alt_image']   ?? '',
+        $data['resume']           ?? '',
+        $data['image']            ?? null,
+        $data['alt_image']        ?? '',
         $data['categorie_id'],
         $data['statut'],
+        $data['date_publication'] ?? date('Y-m-d H:i:s'),
         $id,
     ]);
 }
@@ -281,7 +283,38 @@ function countArticles(): array {
     $total     = (int)$pdo->query("SELECT COUNT(*) FROM articles")->fetchColumn();
     $publie    = (int)$pdo->query("SELECT COUNT(*) FROM articles WHERE statut='publie'")->fetchColumn();
     $brouillon = (int)$pdo->query("SELECT COUNT(*) FROM articles WHERE statut='brouillon'")->fetchColumn();
-    return compact('total', 'publie', 'brouillon');
+    $planifie  = (int)$pdo->query("SELECT COUNT(*) FROM articles WHERE statut='planifie'")->fetchColumn();
+    return compact('total', 'publie', 'brouillon', 'planifie');
+}
+
+function getArticlesByMonth(): array {
+    global $pdo;
+    $sql = "SELECT DATE_FORMAT(date_publication, '%Y-%m') AS mois, COUNT(*) AS nb
+            FROM articles
+            WHERE date_publication >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY mois
+            ORDER BY mois ASC";
+    return $pdo->query($sql)->fetchAll();
+}
+
+function getArticlesByCategory(): array {
+    global $pdo;
+    $sql = "SELECT c.nom, COUNT(a.id) AS nb
+            FROM categories c
+            LEFT JOIN articles a ON a.categorie_id = c.id
+            GROUP BY c.id, c.nom
+            ORDER BY nb DESC";
+    return $pdo->query($sql)->fetchAll();
+}
+
+function countUsers(): int {
+    global $pdo;
+    return (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+}
+
+function countMedias(): int {
+    global $pdo;
+    return (int)$pdo->query("SELECT COUNT(*) FROM medias")->fetchColumn();
 }
 
 // ══════════════════════════════════════════

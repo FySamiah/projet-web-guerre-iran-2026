@@ -33,6 +33,6 @@ Rare dans les projets étudiants
 
 👉 Idée :
 
-Champ date_publication
+ Champ date_publication
 Si date > maintenant → brouillon automatique
 Sinon → publié
