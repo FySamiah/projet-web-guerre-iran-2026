@@ -45,12 +45,13 @@ CREATE TABLE IF NOT EXISTS articles (
 -- ─────────────────────────────
 --  ADMIN PAR DÉFAUT
 --  Email    : admin@site.com
---  Password : Admin123!
+--  Password : password
 -- ─────────────────────────────
 INSERT INTO users (email, mot_de_passe, role) VALUES
 ('admin@site.com',
- '$2y$10$8K1p/a0dhrxSA8ozlNFkHuSzMkG.HnzpP7pJwGf3tCaFHYmbPRdAi',
- 'admin');
+ '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+ 'admin')
+ON DUPLICATE KEY UPDATE mot_de_passe = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
 -- ─────────────────────────────
 --  CATÉGORIES DE TEST
