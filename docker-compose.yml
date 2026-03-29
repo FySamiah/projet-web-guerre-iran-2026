@@ -1,9 +1,11 @@
 version: '3.8'
 
 services:
+
   db:
-    image: mysql:8
-    container_name: db
+    image: mysql:8.0
+    container_name: guerre_iran_db
+    restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: guerre_iran
@@ -14,16 +16,25 @@ services:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backoffice:
-    build: ./backoffice
-    container_name: backoffice
+    build:
+      context: ./backoffice
+      dockerfile: Dockerfile
+    container_name: guerre_iran_bo
+    restart: on-failure
     ports:
       - "8080:80"
     volumes:
       - ./backoffice/src:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_NAME: guerre_iran
@@ -33,14 +44,18 @@ services:
       - app-network
 
   frontoffice:
-    build: ./frontoffice
-    container_name: frontoffice
+    build:
+      context: ./frontoffice
+      dockerfile: Dockerfile
+    container_name: guerre_iran_fo
+    restart: on-failure
     ports:
       - "8081:80"
     volumes:
       - ./frontoffice/src:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_NAME: guerre_iran
@@ -54,3 +69,4 @@ volumes:
 
 networks:
   app-network:
+    driver: bridge
