@@ -1,9 +1,17 @@
 <?php
-// backoffice/src/categories/create.php
+// backoffice/src/categories/edit.php
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 
-$pageTitle = 'Nouvelle catégorie — Back-office';
+$id       = (int)($_GET['id'] ?? 0);
+$categorie = getCategorieById($id);
+
+if (!$categorie) {
+    header('Location: /categories/list.php?error=notfound');
+    exit;
+}
+
+$pageTitle = 'Éditer — ' . $categorie['nom'];
 $errors    = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,25 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($nom === '') $errors[] = 'Le nom est obligatoire.';
 
     if (empty($errors)) {
-        $ok = createCategorie([
+        $ok = updateCategorie($id, [
             'nom'         => $nom,
             'slug'        => slugify($nom),
             'description' => $description,
         ]);
 
         if ($ok) {
-            header('Location: /categories/list.php?success=created');
+            header('Location: /categories/list.php?success=updated');
             exit;
         }
-        $errors[] = 'Erreur : cette catégorie existe peut-être déjà.';
+        $errors[] = 'Erreur lors de la mise à jour.';
     }
+
+    $categorie['nom']         = $nom;
+    $categorie['description'] = $description;
 }
 
 require '../includes/nav.php';
 ?>
 
 <div class="page-header">
-    <h1>Nouvelle catégorie</h1>
+    <h1>Éditer la catégorie</h1>
     <a href="/categories/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
@@ -56,12 +67,11 @@ require '../includes/nav.php';
                 <input
                     type="text" id="nom" name="nom"
                     class="form-control"
-                    value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>"
-                    required autofocus
-                    placeholder="Ex : Militaire"
+                    value="<?= htmlspecialchars($categorie['nom']) ?>"
+                    required
                 >
                 <div class="form-text text-secondary">
-                    Le slug sera généré automatiquement : /categorie/militaire
+                    Slug actuel : /categorie/<?= htmlspecialchars($categorie['slug']) ?>
                 </div>
             </div>
 
@@ -70,13 +80,12 @@ require '../includes/nav.php';
                 <textarea
                     id="description" name="description"
                     class="form-control" rows="3"
-                    placeholder="Description optionnelle de la catégorie"
-                ><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
+                ><?= htmlspecialchars($categorie['description'] ?? '') ?></textarea>
             </div>
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-dark">
-                    Créer la catégorie
+                    Enregistrer
                 </button>
                 <a href="/categories/list.php" class="btn btn-outline-secondary">
                     Annuler
