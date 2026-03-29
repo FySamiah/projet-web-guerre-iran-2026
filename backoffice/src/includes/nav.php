@@ -2,12 +2,21 @@
 // backoffice/src/includes/nav.php
 $currentPage = basename($_SERVER['PHP_SELF']);
 $currentUri  = $_SERVER['REQUEST_URI'];
+
+// Variables SEO par défaut (peuvent être redéfinies dans chaque page)
+$metaDescription = $metaDescription ?? 'Back-office de gestion du site d\'information sur la guerre en Iran 2026';
+$metaKeywords    = $metaKeywords ?? 'back-office, administration, iran, guerre, 2026';
+$metaAuthor      = $metaAuthor ?? 'Admin';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
+    <meta name="author" content="<?= htmlspecialchars($metaAuthor) ?>">
+    <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($pageTitle ?? 'Back-office') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -43,6 +52,20 @@ $currentUri  = $_SERVER['REQUEST_URI'];
                     Catégories
                 </a>
             </li>
+            <li>
+                <a href="/media/list.php"
+                   class="nav-link text-white rounded <?= str_contains($currentUri, '/media/') ? 'active' : '' ?>">
+                    Mediatheque
+                </a>
+            </li>
+            <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
+            <li>
+                <a href="/users/list.php"
+                   class="nav-link text-white rounded <?= str_contains($currentUri, '/users/') ? 'active' : '' ?>">
+                    Utilisateurs
+                </a>
+            </li>
+            <?php endif; ?>
         </ul>
 
         <div class="pt-3 mt-auto border-top border-secondary">

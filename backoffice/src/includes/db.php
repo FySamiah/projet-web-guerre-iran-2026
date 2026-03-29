@@ -1,10 +1,10 @@
 <?php
 // backoffice/src/includes/db.php
 
-$host = getenv('DB_HOST') ?: 'db';
-$db   = getenv('DB_NAME') ?: 'guerre_iran';
-$user = getenv('DB_USER') ?: 'user';
-$pass = getenv('DB_PASS') ?: 'password';
+$host = $_ENV['DB_HOST'] ?? $_SERVER['DB_HOST'] ?? getenv('DB_HOST') ?: 'db';
+$db   = $_ENV['DB_NAME'] ?? $_SERVER['DB_NAME'] ?? getenv('DB_NAME') ?: 'guerre_iran';
+$user = $_ENV['DB_USER'] ?? $_SERVER['DB_USER'] ?? getenv('DB_USER') ?: 'user';
+$pass = $_ENV['DB_PASS'] ?? $_SERVER['DB_PASS'] ?? getenv('DB_PASS') ?: 'password';
 
 try {
     $pdo = new PDO(
@@ -17,7 +17,7 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die('Connexion BDD échouée : ' . $e->getMessage());
+    die('Connexion BDD echouee : ' . $e->getMessage());
 }
 
 // ══════════════════════════════════════════
@@ -34,8 +34,70 @@ function getUserByEmail(string $email): ?array {
 function getUsers(): array {
     global $pdo;
     return $pdo->query(
-        "SELECT id, email, role, created_at FROM users ORDER BY created_at DESC"
+        "SELECT id, nom, email, role, actif, created_at FROM users ORDER BY created_at DESC"
     )->fetchAll();
+}
+
+function getUserById(int $id): ?array {
+    global $pdo;
+    $st = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $st->execute([$id]);
+    return $st->fetch() ?: null;
+}
+
+function createUser(array $data): bool {
+    global $pdo;
+    $st = $pdo->prepare(
+        "INSERT INTO users (nom, email, mot_de_passe, role, actif) VALUES (?, ?, ?, ?, ?)"
+    );
+    return $st->execute([
+        $data['nom'],
+        $data['email'],
+        password_hash($data['mot_de_passe'], PASSWORD_DEFAULT),
+        $data['role'],
+        $data['actif'] ?? 1,
+    ]);
+}
+
+function updateUser(int $id, array $data): bool {
+    global $pdo;
+    if (!empty($data['mot_de_passe'])) {
+        $st = $pdo->prepare(
+            "UPDATE users SET nom = ?, email = ?, mot_de_passe = ?, role = ?, actif = ? WHERE id = ?"
+        );
+        return $st->execute([
+            $data['nom'],
+            $data['email'],
+            password_hash($data['mot_de_passe'], PASSWORD_DEFAULT),
+            $data['role'],
+            $data['actif'],
+            $id,
+        ]);
+    } else {
+        $st = $pdo->prepare(
+            "UPDATE users SET nom = ?, email = ?, role = ?, actif = ? WHERE id = ?"
+        );
+        return $st->execute([
+            $data['nom'],
+            $data['email'],
+            $data['role'],
+            $data['actif'],
+            $id,
+        ]);
+    }
+}
+
+function deleteUser(int $id): bool {
+    global $pdo;
+    // Ne pas supprimer le dernier admin
+    $st = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'admin' AND id != ?");
+    $st->execute([$id]);
+    if ($st->fetchColumn() < 1) {
+        $user = getUserById($id);
+        if ($user && $user['role'] === 'admin') return false;
+    }
+    $st = $pdo->prepare("DELETE FROM users WHERE id = ?");
+    return $st->execute([$id]);
 }
 
 // ══════════════════════════════════════════
@@ -98,6 +160,60 @@ function getArticles(): array {
          LEFT JOIN users      u ON a.user_id      = u.id
          ORDER BY a.date_publication DESC"
     )->fetchAll();
+}
+
+function getArticlesFiltered(array $filters): array {
+    global $pdo;
+
+    $sql = "SELECT a.*, c.nom AS categorie, u.email AS auteur
+            FROM articles a
+            LEFT JOIN categories c ON a.categorie_id = c.id
+            LEFT JOIN users u ON a.user_id = u.id
+            WHERE 1=1";
+    $params = [];
+
+    // Recherche par mot-clé (titre ou contenu)
+    if (!empty($filters['search'])) {
+        $sql .= " AND (a.titre LIKE ? OR a.contenu LIKE ?)";
+        $params[] = '%' . $filters['search'] . '%';
+        $params[] = '%' . $filters['search'] . '%';
+    }
+
+    // Filtre par catégorie
+    if (!empty($filters['categorie_id'])) {
+        $sql .= " AND a.categorie_id = ?";
+        $params[] = (int)$filters['categorie_id'];
+    }
+
+    // Filtre par statut
+    if (!empty($filters['statut'])) {
+        $sql .= " AND a.statut = ?";
+        $params[] = $filters['statut'];
+    }
+
+    // Filtre par auteur
+    if (!empty($filters['user_id'])) {
+        $sql .= " AND a.user_id = ?";
+        $params[] = (int)$filters['user_id'];
+    }
+
+    // Filtre par date (depuis)
+    if (!empty($filters['date_from'])) {
+        $sql .= " AND DATE(a.date_publication) >= ?";
+        $params[] = $filters['date_from'];
+    }
+
+    // Filtre par date (jusqu'à)
+    if (!empty($filters['date_to'])) {
+        $sql .= " AND DATE(a.date_publication) <= ?";
+        $params[] = $filters['date_to'];
+    }
+
+    $sql .= " ORDER BY a.date_publication DESC";
+
+    $st = $pdo->prepare($sql);
+    $st->execute($params);
+    return $st->fetchAll();
 }
 
 function getArticleById(int $id): ?array {
@@ -188,4 +304,88 @@ function uploadImage(array $file): ?string {
     $filename = uniqid('img_', true) . '.' . $ext;
     $dest     = __DIR__ . '/../uploads/' . $filename;
     return move_uploaded_file($file['tmp_name'], $dest) ? $filename : null;
+}
+
+// ══════════════════════════════════════════
+//  MÉDIATHÈQUE
+// ══════════════════════════════════════════
+
+function getMedias(): array {
+    global $pdo;
+    return $pdo->query(
+        "SELECT m.*, u.email AS auteur
+         FROM medias m
+         LEFT JOIN users u ON m.user_id = u.id
+         ORDER BY m.created_at DESC"
+    )->fetchAll();
+}
+
+function getMediaById(int $id): ?array {
+    global $pdo;
+    $st = $pdo->prepare("SELECT * FROM medias WHERE id = ?");
+    $st->execute([$id]);
+    return $st->fetch() ?: null;
+}
+
+function createMedia(array $data): bool {
+    global $pdo;
+    $st = $pdo->prepare(
+        "INSERT INTO medias (filename, original_name, alt_text, mime_type, size, user_id)
+         VALUES (?, ?, ?, ?, ?, ?)"
+    );
+    return $st->execute([
+        $data['filename'],
+        $data['original_name'],
+        $data['alt_text'] ?? '',
+        $data['mime_type'],
+        $data['size'],
+        $data['user_id'],
+    ]);
+}
+
+function updateMedia(int $id, array $data): bool {
+    global $pdo;
+    $st = $pdo->prepare("UPDATE medias SET alt_text = ? WHERE id = ?");
+    return $st->execute([$data['alt_text'], $id]);
+}
+
+function deleteMedia(int $id): bool {
+    global $pdo;
+    $media = getMediaById($id);
+    if ($media) {
+        $filepath = __DIR__ . '/../uploads/' . $media['filename'];
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
+    }
+    $st = $pdo->prepare("DELETE FROM medias WHERE id = ?");
+    return $st->execute([$id]);
+}
+
+function uploadMedia(array $file, int $userId): ?array {
+    $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    $finfo   = finfo_open(FILEINFO_MIME_TYPE);
+    $mime    = finfo_file($finfo, $file['tmp_name']);
+    if (!in_array($mime, $allowed))       return null;
+    if ($file['size'] > 5 * 1024 * 1024) return null;
+
+    $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $filename = uniqid('img_', true) . '.' . $ext;
+    $dest     = __DIR__ . '/../uploads/' . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $dest)) return null;
+
+    $data = [
+        'filename'      => $filename,
+        'original_name' => $file['name'],
+        'alt_text'      => '',
+        'mime_type'     => $mime,
+        'size'          => $file['size'],
+        'user_id'       => $userId,
+    ];
+
+    if (createMedia($data)) {
+        return $data;
+    }
+    return null;
 }

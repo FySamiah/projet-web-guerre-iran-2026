@@ -11,14 +11,31 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- ─────────────────────────────
---  USERS  (role = admin uniquement)
+--  USERS (admin, editeur, redacteur)
 -- ─────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
   id           INT AUTO_INCREMENT PRIMARY KEY,
+  nom          VARCHAR(100) NOT NULL DEFAULT '',
   email        VARCHAR(150) UNIQUE NOT NULL,
   mot_de_passe VARCHAR(255) NOT NULL,
-  role         ENUM('admin') NOT NULL DEFAULT 'admin',
+  role         ENUM('admin', 'editeur', 'redacteur') NOT NULL DEFAULT 'redacteur',
+  actif        TINYINT(1) NOT NULL DEFAULT 1,
   created_at   DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ─────────────────────────────
+--  MÉDIAS (médiathèque)
+-- ─────────────────────────────
+CREATE TABLE IF NOT EXISTS medias (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  filename    VARCHAR(255) NOT NULL,
+  original_name VARCHAR(255) NOT NULL,
+  alt_text    VARCHAR(255),
+  mime_type   VARCHAR(100),
+  size        INT,
+  user_id     INT,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- ─────────────────────────────
@@ -43,15 +60,14 @@ CREATE TABLE IF NOT EXISTS articles (
 );
 
 -- ─────────────────────────────
---  ADMIN PAR DÉFAUT
---  Email    : admin@site.com
---  Password : password
+--  UTILISATEURS PAR DÉFAUT
+--  Password : password (pour tous)
 -- ─────────────────────────────
-INSERT INTO users (email, mot_de_passe, role) VALUES
-('admin@site.com',
- '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
- 'admin')
-ON DUPLICATE KEY UPDATE mot_de_passe = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+INSERT INTO users (nom, email, mot_de_passe, role) VALUES
+('Administrateur', 'admin@site.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
+('Éditeur Test', 'editeur@site.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'editeur'),
+('Rédacteur Test', 'redacteur@site.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'redacteur')
+ON DUPLICATE KEY UPDATE nom = VALUES(nom), role = VALUES(role);
 
 -- ─────────────────────────────
 --  CATÉGORIES DE TEST
