@@ -1,0 +1,28 @@
+RewriteEngine On
+
+# Redirection vers HTTPS (à activer en production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Supprime les extensions .php des URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# URLs propres pour les articles
+# /article/mon-slug -> article.php?slug=mon-slug
+RewriteRule ^article/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]
+
+# URLs propres pour les catégories
+# /categorie/militaire -> categorie.php?slug=militaire
+RewriteRule ^categorie/([a-z0-9-]+)/?$ categorie.php?slug=$1 [L,QSA]
+
+# Empêcher l'accès direct aux fichiers sensibles
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
+    Require all denied
+</FilesMatch>
+
+# Protection du dossier includes
+<IfModule mod_rewrite.c>
+    RewriteRule ^includes/ - [F,L]
+</IfModule>

@@ -21,16 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $user = getUserByEmail($email);
         if ($user && password_verify($password, $user['mot_de_passe'])) {
-            session_regenerate_id(true);
-            $_SESSION['user'] = [
-                'id'    => $user['id'],
-                'email' => $user['email'],
-                'role'  => $user['role'],
-            ];
-            header('Location: /dashboard.php');
-            exit;
+            // Verifier si le compte est actif
+            if (isset($user['actif']) && !$user['actif']) {
+                $error = 'Ce compte est desactive.';
+            } else {
+                session_regenerate_id(true);
+                $_SESSION['user'] = [
+                    'id'    => $user['id'],
+                    'nom'   => $user['nom'] ?? '',
+                    'email' => $user['email'],
+                    'role'  => $user['role'],
+                ];
+                header('Location: /dashboard.php');
+                exit;
+            }
+        } else {
+            $error = 'Email ou mot de passe incorrect.';
         }
-        $error = 'Email ou mot de passe incorrect.';
     }
 }
 ?>
