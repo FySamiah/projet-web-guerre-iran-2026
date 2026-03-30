@@ -7,7 +7,7 @@ $id       = (int)($_GET['id'] ?? 0);
 $categorie = getCategorieById($id);
 
 if (!$categorie) {
-    header('Location: /categories/list.php?error=notfound');
+    header('Location: /admin/categories/list.php?error=notfound');
     exit;
 }
 
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($ok) {
-            header('Location: /categories/list.php?success=updated');
+            header('Location: /admin/categories/list.php?success=updated');
             exit;
         }
         $errors[] = 'Erreur lors de la mise à jour.';
@@ -43,7 +43,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Éditer la catégorie</h1>
-    <a href="/categories/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
+    <a href="/admin/categories/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
 <?php if (!empty($errors)): ?>
@@ -87,7 +87,7 @@ require '../includes/nav.php';
                 <button type="submit" class="btn btn-dark">
                     Enregistrer
                 </button>
-                <a href="/categories/list.php" class="btn btn-outline-secondary">
+                <a href="/admin/categories/list.php" class="btn btn-outline-secondary">
                     Annuler
                 </a>
             </div>

@@ -27,11 +27,11 @@ if (isset($_GET['delete'])) {
     $filepath = $uploadDir . $filename;
     if (file_exists($filepath) && is_file($filepath)) {
         if (unlink($filepath)) {
-            header('Location: /media/list.php?success=deleted');
+            header('Location: /admin/media/list.php?success=deleted');
             exit;
         }
     }
-    header('Location: /media/list.php?error=delete_failed');
+    header('Location: /admin/media/list.php?error=delete_failed');
     exit;
 }
 
@@ -125,7 +125,7 @@ require '../includes/nav.php';
                                             onclick="copyToClipboard('<?= htmlspecialchars($img['url']) ?>')">
                                         Copier URL
                                     </button>
-                                    <a href="/media/list.php?delete=<?= urlencode($img['name']) ?>"
+                                    <a href="/admin/media/list.php?delete=<?= urlencode($img['name']) ?>"
                                        class="btn btn-sm btn-outline-danger"
                                        onclick="return confirm('Supprimer cette image ?')">
                                         Suppr.

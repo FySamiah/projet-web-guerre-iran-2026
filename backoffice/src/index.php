@@ -8,10 +8,10 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Si non connecté, toujours rediriger vers login
 if (!isset($_SESSION['user'])) {
-    header('Location: /login.php');
+    header('Location: /admin/login.php');
     exit;
 }
 
 // Rediriger vers le dashboard par défaut
-header('Location: /dashboard.php');
+header('Location: /admin/dashboard.php');
 exit;

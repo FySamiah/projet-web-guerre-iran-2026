@@ -81,14 +81,37 @@ INSERT INTO categories (nom, slug, description) VALUES
 -- ─────────────────────────────
 --  ARTICLES DE TEST
 -- ─────────────────────────────
-INSERT INTO articles (titre, slug, resume, contenu, alt_image, categorie_id, user_id, statut) VALUES
+INSERT INTO articles 
+(titre, slug, resume, contenu, alt_image, categorie_id, user_id, statut) 
+VALUES
 (
-  'Offensive militaire au nord de l Iran',
-  'offensive-militaire-nord-iran',
-  'Les forces armées ont lancé une nouvelle offensive dans le nord du pays.',
-  '<h2>Contexte</h2><p>Depuis plusieurs semaines, les tensions ont atteint un seuil critique.</p><h2>Déroulement</h2><p>L offensive a débuté le 12 mars 2026 à l aube.</p>',
-  'Soldats iraniens progressant dans une zone montagneuse',
-  1, 1, 'publie'
+  'Offensive militaire au nord de l Iran : escalade des tensions en 2026',
+  'offensive-militaire-nord-iran-2026',
+  'Une offensive militaire majeure a été lancée dans le nord de l Iran, marquant une nouvelle étape dans les tensions régionales et suscitant des réactions internationales.',
+  
+  '<h2>Contexte géopolitique</h2>
+  <p>Depuis plusieurs semaines, les tensions entre les forces gouvernementales et différents groupes armés présents dans le nord de l Iran se sont intensifiées. Cette région stratégique, riche en ressources et proche de zones frontalières sensibles, est devenue un point de friction majeur.</p>
+
+  <h2>Déclenchement de l offensive</h2>
+  <p>L offensive a officiellement débuté le 12 mars 2026 à l aube. Selon des sources militaires, plusieurs unités terrestres ont été mobilisées, appuyées par des frappes aériennes ciblées. L objectif principal était de reprendre le contrôle de zones considérées comme instables.</p>
+
+  <h2>Déroulement des opérations</h2>
+  <p>Les combats se sont intensifiés dans les zones montagneuses, rendant la progression des troupes difficile. Les forces armées ont utilisé des équipements lourds ainsi que des drones de reconnaissance pour surveiller les mouvements ennemis.</p>
+
+  <h2>Impact sur les populations civiles</h2>
+  <p>Plusieurs villages ont été évacués en urgence. Des organisations humanitaires signalent un déplacement massif de civils vers des zones plus sûres. L accès à l eau, à la nourriture et aux soins médicaux reste limité dans certaines régions.</p>
+
+  <h2>Réactions internationales</h2>
+  <p>La communauté internationale a exprimé son inquiétude face à cette escalade. Plusieurs pays ont appelé à la retenue et à une résolution pacifique du conflit. Des discussions diplomatiques sont en cours afin d éviter une aggravation de la situation.</p>
+
+  <h2>Perspectives et enjeux</h2>
+  <p>Cette offensive pourrait avoir des conséquences durables sur la stabilité régionale. Les analystes estiment que la situation reste incertaine et dépendra des résultats militaires ainsi que des négociations politiques à venir.</p>',
+  
+  'Soldats iraniens progressant dans une zone montagneuse lors d une offensive militaire en 2026',
+  
+  1, 
+  1, 
+  'publie'
 ),
 (
   'Négociations diplomatiques à Genève',

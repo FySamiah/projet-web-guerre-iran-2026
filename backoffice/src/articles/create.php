@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'statut'           => $statut,
             'date_publication' => $statut === 'planifie' ? $date_publication : date('Y-m-d H:i:s'),
         ]);
-        if ($ok) { header('Location: /articles/list.php?success=created'); exit; }
+        if ($ok) { header('Location: /admin/articles/list.php?success=created'); exit; }
         $errors[] = 'Erreur enregistrement (titre déjà utilisé ?).';
     }
 }
@@ -58,7 +58,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Nouvel article</h1>
-    <a href="/articles/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
+    <a href="/admin/articles/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
 <?php if ($errors): ?>
@@ -183,7 +183,7 @@ require '../includes/nav.php';
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-dark">Enregistrer</button>
-                <a href="/articles/list.php" class="btn btn-outline-secondary">Annuler</a>
+                <a href="/admin/articles/list.php" class="btn btn-outline-secondary">Annuler</a>
             </div>
 
         </form>

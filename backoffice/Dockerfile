@@ -12,4 +12,7 @@ RUN echo 'PassEnv DB_HOST DB_NAME DB_USER DB_PASS' >> /etc/apache2/conf-availabl
 
 WORKDIR /var/www/html
 
+# Créer le dossier uploads avec les permissions correctes
+RUN mkdir -p uploads && chmod 777 uploads
+
 EXPOSE 80

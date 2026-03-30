@@ -17,7 +17,7 @@ require 'includes/nav.php';
 
 <div class="page-header">
     <h1>Tableau de bord</h1>
-    <a href="/articles/create.php" class="btn btn-dark btn-sm">+ Nouvel article</a>
+    <a href="/admin/articles/create.php" class="btn btn-dark btn-sm">+ Nouvel article</a>
 </div>
 
 <!-- Stats principales -->
@@ -134,7 +134,7 @@ require 'includes/nav.php';
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
         <h2 class="h6 mb-0">Derniers articles</h2>
-        <a href="/articles/list.php" class="btn btn-outline-dark btn-sm">Voir tout</a>
+        <a href="/admin/articles/list.php" class="btn btn-outline-dark btn-sm">Voir tout</a>
     </div>
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
@@ -165,7 +165,7 @@ require 'includes/nav.php';
                         <?php endif; ?>
                     </td>
                     <td><?= date('d/m/Y', strtotime($a['date_publication'])) ?></td>
-                    <td><a href="/articles/edit.php?id=<?= $a['id'] ?>" class="btn btn-sm btn-outline-dark">Editer</a></td>
+                    <td><a href="/admin/articles/edit.php?id=<?= $a['id'] ?>" class="btn btn-sm btn-outline-dark">Editer</a></td>
                 </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -178,7 +178,7 @@ require 'includes/nav.php';
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
         <h2 class="h6 mb-0">Categories</h2>
-        <a href="/categories/list.php" class="btn btn-outline-dark btn-sm">Gerer</a>
+        <a href="/admin/categories/list.php" class="btn btn-outline-dark btn-sm">Gerer</a>
     </div>
     <div class="card-body">
         <div class="d-flex flex-wrap gap-2">

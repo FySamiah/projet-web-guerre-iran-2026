@@ -252,24 +252,29 @@ function createArticle(array $data): bool {
 
 function updateArticle(int $id, array $data): bool {
     global $pdo;
-    $st = $pdo->prepare(
-        "UPDATE articles
-         SET titre = ?, slug = ?, contenu = ?, resume = ?,
-             image = ?, alt_image = ?, categorie_id = ?, statut = ?, date_publication = ?
-         WHERE id = ?"
-    );
-    return $st->execute([
-        $data['titre'],
-        $data['slug'],
-        $data['contenu'],
-        $data['resume']           ?? '',
-        $data['image']            ?? null,
-        $data['alt_image']        ?? '',
-        $data['categorie_id'],
-        $data['statut'],
-        $data['date_publication'] ?? date('Y-m-d H:i:s'),
-        $id,
-    ]);
+    try {
+        $st = $pdo->prepare(
+            "UPDATE articles
+             SET titre = ?, slug = ?, contenu = ?, resume = ?,
+                 image = ?, alt_image = ?, categorie_id = ?, statut = ?, date_publication = ?
+             WHERE id = ?"
+        );
+        return $st->execute([
+            $data['titre'],
+            $data['slug'],
+            $data['contenu'],
+            $data['resume']           ?? '',
+            $data['image']            ?? null,
+            $data['alt_image']        ?? '',
+            $data['categorie_id'],
+            $data['statut'],
+            $data['date_publication'] ?? date('Y-m-d H:i:s'),
+            $id,
+        ]);
+    } catch (Exception $e) {
+        error_log('UpdateArticle Error: ' . $e->getMessage());
+        return false;
+    }
 }
 
 function deleteArticle(int $id): bool {
@@ -359,7 +364,15 @@ function getMediaById(int $id): ?array {
     $st->execute([$id]);
     return $st->fetch() ?: null;
 }
-
+/**
+ * Vérifie si un slug existe (en excluant un article par son ID)
+ */
+function slugExists(string $slug, int $excludeId = 0): bool {
+    global $pdo;
+    $st = $pdo->prepare("SELECT COUNT(*) FROM articles WHERE slug = ? AND id != ?");
+    $st->execute([$slug, $excludeId]);
+    return (int)$st->fetchColumn() > 0;
+}
 function createMedia(array $data): bool {
     global $pdo;
     $st = $pdo->prepare(

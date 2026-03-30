@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 
 // Seuls les admins peuvent gérer les utilisateurs
 if ($currentUser['role'] !== 'admin') {
-    header('Location: /dashboard.php');
+    header('Location: /admin/dashboard.php');
     exit;
 }
 
@@ -16,7 +16,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Utilisateurs <span class="text-secondary fw-normal fs-6">(<?= count($users) ?>)</span></h1>
-    <a href="/users/create.php" class="btn btn-dark btn-sm">+ Nouvel utilisateur</a>
+    <a href="/admin/users/create.php" class="btn btn-dark btn-sm">+ Nouvel utilisateur</a>
 </div>
 
 <?php if (isset($_GET['success'])): ?>
@@ -63,9 +63,9 @@ require '../includes/nav.php';
                     </td>
                     <td><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
                     <td>
-                        <a href="/users/edit.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Éditer</a>
+                        <a href="/admin/users/edit.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Éditer</a>
                         <?php if ($u['id'] !== $currentUser['id']): ?>
-                            <a href="/users/delete.php?id=<?= $u['id'] ?>"
+                            <a href="/admin/users/delete.php?id=<?= $u['id'] ?>"
                                class="btn btn-sm btn-outline-danger"
                                onclick="return confirm('Supprimer cet utilisateur ?')">Suppr.</a>
                         <?php endif; ?>

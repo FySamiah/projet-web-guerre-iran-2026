@@ -4,7 +4,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (isset($_SESSION['user'])) {
-    header('Location: /dashboard.php');
+    header('Location: /admin/dashboard.php');
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'email' => $user['email'],
                     'role'  => $user['role'],
                 ];
-                header('Location: /dashboard.php');
+                header('Location: /admin/dashboard.php');
                 exit;
             }
         } else {

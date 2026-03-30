@@ -2,9 +2,13 @@
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 
+// Activer affichage des erreurs
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 $id      = (int)($_GET['id'] ?? 0);
 $article = getArticleById($id);
-if (!$article) { header('Location: /articles/list.php?error=notfound'); exit; }
+if (!$article) { header('Location: /admin/articles/list.php?error=notfound'); exit; }
 
 $pageTitle  = 'Éditer — ' . $article['titre'];
 $categories = getCategories();
@@ -21,8 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($titre === '')       $errors[] = 'Le titre est obligatoire.';
     if ($contenu === '')     $errors[] = 'Le contenu est obligatoire.';
-    if ($alt_image === '')   $errors[] = 'La description alt est obligatoire.';
     if ($categorie_id === 0) $errors[] = 'Choisissez une catégorie.';
+    
+    // alt_image obligatoire juste si on ajoute/change une image
+    if (!empty($_FILES['image']['name']) && $alt_image === '') {
+        $errors[] = 'La description alt est obligatoire pour une nouvelle image.';
+    }
+
+    // Vérifier le slug (UNIQUE constraint)
+    $newSlug = slugify($titre);
+    if ($newSlug !== $article['slug'] && slugExists($newSlug, $id)) {
+        $errors[] = 'Ce slug existe déjà. Changez le titre pour un unique.';
+    }
 
     if ($statut === 'planifie') {
         if (empty($date_publication)) {
@@ -49,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $ok = updateArticle($id, [
             'titre'            => $titre,
-            'slug'             => slugify($titre),
+            'slug'             => $newSlug,
             'contenu'          => $contenu,
             'resume'           => $resume,
             'image'            => $imageFilename,
@@ -58,8 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'statut'           => $statut,
             'date_publication' => $statut === 'planifie' ? $date_publication : $article['date_publication'],
         ]);
-        if ($ok) { header('Location: /articles/list.php?success=updated'); exit; }
-        $errors[] = 'Erreur lors de la mise à jour.';
+        if ($ok) { header('Location: /admin/articles/list.php?success=updated'); exit; }
+        $errors[] = 'Erreur lors de la mise à jour. Image: ' . htmlspecialchars($imageFilename) . ' | Alt: ' . htmlspecialchars($alt_image);
     }
 
     // Mettre à jour les valeurs pour ré-affichage après erreur
@@ -73,7 +87,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Éditer l'article</h1>
-    <a href="/articles/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
+    <a href="/admin/articles/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
 <?php if ($errors): ?>
@@ -218,7 +232,7 @@ require '../includes/nav.php';
                 <button type="submit" class="btn btn-dark">
                     Enregistrer les modifications
                 </button>
-                <a href="/articles/list.php" class="btn btn-outline-secondary">Annuler</a>
+                <a href="/admin/articles/list.php" class="btn btn-outline-secondary">Annuler</a>
             </div>
 
         </form>

@@ -29,7 +29,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Articles <span class="text-secondary fw-normal fs-6">(<?= count($articles) ?>)</span></h1>
-    <a href="/articles/create.php" class="btn btn-dark btn-sm">+ Nouvel article</a>
+    <a href="/admin/articles/create.php" class="btn btn-dark btn-sm">+ Nouvel article</a>
 </div>
 
 <?php if (isset($_GET['success'])): ?>
@@ -105,7 +105,7 @@ require '../includes/nav.php';
             <div class="col-md-3">
                 <button type="submit" class="btn btn-dark">Filtrer</button>
                 <?php if ($hasFilters): ?>
-                    <a href="/articles/list.php" class="btn btn-outline-secondary">Reinitialiser</a>
+                    <a href="/admin/articles/list.php" class="btn btn-outline-secondary">Reinitialiser</a>
                 <?php endif; ?>
             </div>
         </form>
@@ -131,9 +131,9 @@ require '../includes/nav.php';
             <?php if (empty($articles)): ?>
                 <tr><td colspan="7" class="text-center text-secondary py-4">
                     <?php if ($hasFilters): ?>
-                        Aucun article ne correspond aux filtres. <a href="/articles/list.php">Reinitialiser</a>
+                        Aucun article ne correspond aux filtres. <a href="/admin/articles/list.php">Reinitialiser</a>
                     <?php else: ?>
-                        Aucun article. <a href="/articles/create.php">Creer le premier</a>
+                        Aucun article. <a href="/admin/articles/create.php">Creer le premier</a>
                     <?php endif; ?>
                 </td></tr>
             <?php else: ?>
@@ -169,8 +169,8 @@ require '../includes/nav.php';
                         <?php else: ?>—<?php endif; ?>
                     </td>
                     <td>
-                        <a href="/articles/edit.php?id=<?= $a['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Editer</a>
-                        <a href="/articles/delete.php?id=<?= $a['id'] ?>"
+                        <a href="/admin/articles/edit.php?id=<?= $a['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Editer</a>
+                        <a href="/admin/articles/delete.php?id=<?= $a['id'] ?>"
                            class="btn btn-sm btn-outline-danger"
                            onclick="return confirm('Supprimer cet article ?')">Suppr.</a>
                     </td>
