@@ -181,6 +181,7 @@ require '../includes/nav.php';
                     <label class="form-label" for="date_publication">Date de publication</label>
                     <input type="datetime-local" id="date_publication"
                            name="date_publication" class="form-control"
+                           <?= ($article['statut'] !== 'planifie') ? 'disabled' : '' ?>
                            value="<?= htmlspecialchars(
                                isset($article['date_publication'])
                                ? date('Y-m-d\TH:i', strtotime($article['date_publication']))
@@ -216,14 +217,16 @@ require '../includes/nav.php';
                 </div>
                 <div class="col-md-7">
                     <label class="form-label" for="alt_image">
-                        Description image (alt) <span class="text-danger">*</span>
+                        Description image (alt)
+                        <?php if ($article['image']): ?><span class="text-danger">*</span><?php endif; ?>
                     </label>
                     <input type="text" id="alt_image" name="alt_image"
-                           class="form-control" required
+                           class="form-control"
+                           <?= $article['image'] ? 'required' : '' ?>
                            value="<?= htmlspecialchars($article['alt_image'] ?? '') ?>"
                            placeholder="Description précise de l'image">
                     <div class="form-text text-secondary">
-                        Obligatoire pour le SEO et l'accessibilité.
+                        Obligatoire si une image est présente.
                     </div>
                 </div>
             </div>
@@ -290,8 +293,11 @@ tinymce.init({
 });
 
 // Sync TinyMCE → textarea avant soumission
-document.getElementById('article-form').addEventListener('submit', function() {
-    tinymce.triggerSave();
+document.getElementById('article-form').addEventListener('submit', function(e) {
+    // S'assurer que TinyMCE synchronise son contenu
+    if (typeof tinymce !== 'undefined' && tinymce.get('contenu')) {
+        tinymce.triggerSave();
+    }
 });
 
 function previewImage(input) {
@@ -306,8 +312,17 @@ function previewImage(input) {
 function toggleDatePublication() {
     const statut    = document.getElementById('statut').value;
     const container = document.getElementById('date-publication-container');
-    container.style.display = (statut === 'planifie') ? 'block' : 'none';
+    const input     = document.getElementById('date_publication');
+    if (statut === 'planifie') {
+        container.style.display = 'block';
+        input.disabled = false;
+    } else {
+        container.style.display = 'none';
+        input.disabled = true; // Désactiver pour éviter la validation HTML5
+    }
 }
+// Appliquer au chargement de la page
+document.addEventListener('DOMContentLoaded', toggleDatePublication);
 </script>
 
 <?php require '../includes/footer.php'; ?>
