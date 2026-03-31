@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 
 // Seuls les admins peuvent gérer les utilisateurs
 if ($currentUser['role'] !== 'admin') {
-    header('Location: /dashboard.php');
+    header('Location: /admin/dashboard.php');
     exit;
 }
 
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'actif'        => $actif,
         ]);
         if ($ok) {
-            header('Location: /users/list.php?success=created');
+            header('Location: /admin/users/list.php?success=created');
             exit;
         }
         $errors[] = 'Erreur lors de la création.';
@@ -48,7 +48,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Nouvel utilisateur</h1>
-    <a href="/users/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
+    <a href="/admin/users/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
 <?php if ($errors): ?>
@@ -101,7 +101,7 @@ require '../includes/nav.php';
 
             <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-dark">Créer l'utilisateur</button>
-                <a href="/users/list.php" class="btn btn-outline-secondary">Annuler</a>
+                <a href="/admin/users/list.php" class="btn btn-outline-secondary">Annuler</a>
             </div>
         </form>
     </div>

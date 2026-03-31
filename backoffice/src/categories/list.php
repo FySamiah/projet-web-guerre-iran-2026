@@ -8,7 +8,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Catégories</h1>
-    <a href="/categories/create.php" class="btn btn-dark btn-sm">+ Nouvelle catégorie</a>
+    <a href="/admin/categories/create.php" class="btn btn-dark btn-sm">+ Nouvelle catégorie</a>
 </div>
 
 <?php if (isset($_GET['success'])): ?>
@@ -33,7 +33,7 @@ require '../includes/nav.php';
             <tbody>
             <?php if (empty($categories)): ?>
                 <tr><td colspan="5" class="text-center text-secondary py-4">
-                    Aucune catégorie. <a href="/categories/create.php">Créer la première</a>
+                    Aucune catégorie. <a href="/admin/categories/create.php">Créer la première</a>
                 </td></tr>
             <?php else: ?>
                 <?php foreach ($categories as $c): ?>
@@ -43,9 +43,9 @@ require '../includes/nav.php';
                     <td><span class="badge bg-light text-dark border"><?= $c['nb_articles'] ?></span></td>
                     <td class="text-secondary" style="font-size:12px"><?= htmlspecialchars(mb_substr($c['description'] ?? '', 0, 55)) ?></td>
                     <td>
-                        <a href="/categories/edit.php?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Éditer</a>
+                        <a href="/admin/categories/edit.php?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary me-1">Éditer</a>
                         <?php if ($c['nb_articles'] == 0): ?>
-                            <a href="/categories/delete.php?id=<?= $c['id'] ?>"
+                            <a href="/admin/categories/delete.php?id=<?= $c['id'] ?>"
                                class="btn btn-sm btn-outline-danger"
                                onclick="return confirm('Supprimer cette catégorie ?')">Suppr.</a>
                         <?php else: ?>

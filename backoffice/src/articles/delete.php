@@ -5,7 +5,7 @@ require_once '../includes/db.php';
 $id      = (int)($_GET['id'] ?? 0);
 $article = getArticleById($id);
 
-if (!$article) { header('Location: /articles/list.php?error=notfound'); exit; }
+if (!$article) { header('Location: /admin/articles/list.php?error=notfound'); exit; }
 
 if ($article['image']) {
     $path = __DIR__ . '/../uploads/' . $article['image'];
@@ -13,6 +13,6 @@ if ($article['image']) {
 }
 
 deleteArticle($id)
-    ? header('Location: /articles/list.php?success=deleted')
-    : header('Location: /articles/list.php?error=delete');
+    ? header('Location: /admin/articles/list.php?success=deleted')
+    : header('Location: /admin/articles/list.php?error=delete');
 exit;

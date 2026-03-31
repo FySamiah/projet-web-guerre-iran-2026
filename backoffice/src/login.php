@@ -4,7 +4,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (isset($_SESSION['user'])) {
-    header('Location: /dashboard.php');
+    header('Location: /admin/dashboard.php');
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'email' => $user['email'],
                     'role'  => $user['role'],
                 ];
-                header('Location: /dashboard.php');
+                header('Location: /admin/dashboard.php');
                 exit;
             }
         } else {
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input
                 type="email" id="email" name="email"
                 class="form-control"
-                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                value="<?= htmlspecialchars($_POST['email'] ?? 'admin@site.com') ?>"
                 placeholder="admin@site.com"
                 required autofocus
             >
@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input
                 type="password" id="password" name="password"
                 class="form-control"
+                value="password"
                 placeholder="••••••••"
                 required
             >

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /article/
+Allow: /categorie/
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /uploads/
+Disallow: /assets/
+
+Sitemap: /sitemap.xml
+
+# Crawl delay (optionnel)
+Crawl-delay: 1

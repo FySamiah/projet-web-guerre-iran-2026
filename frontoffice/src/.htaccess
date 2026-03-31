@@ -1,28 +1,24 @@
-RewriteEngine On
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
 
-# Redirection vers HTTPS (à activer en production)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Ne pas rewriter les fichiers/dossiers réels
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
 
-# Supprime les extensions .php des URLs
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.*)$ $1.php [L]
+    # Routeur principal pour toutes les URLs
+    # /article/titre-de-article → index.php?page=article&slug=titre-de-article
+    RewriteRule ^article/([a-z0-9-]+)/?$ index.php?page=article&slug=$1 [QSA,L]
 
-# URLs propres pour les articles
-# /article/mon-slug -> article.php?slug=mon-slug
-RewriteRule ^article/([a-z0-9-]+)/?$ article.php?slug=$1 [L,QSA]
+    # /categorie/nom-categorie → index.php?page=categorie&slug=nom-categorie
+    RewriteRule ^categorie/([a-z0-9-]+)/?$ index.php?page=categorie&slug=$1 [QSA,L]
 
-# URLs propres pour les catégories
-# /categorie/militaire -> categorie.php?slug=militaire
-RewriteRule ^categorie/([a-z0-9-]+)/?$ categorie.php?slug=$1 [L,QSA]
+    # Accueil (racine) → index.php?page=home
+    RewriteRule ^/?$ index.php?page=home [QSA,L]
+
+</IfModule>
 
 # Empêcher l'accès direct aux fichiers sensibles
-<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
+<FilesMatch "\.(env|htaccess|htpasswd|ini|log|sh|sql)$">
     Require all denied
 </FilesMatch>
-
-# Protection du dossier includes
-<IfModule mod_rewrite.c>
-    RewriteRule ^includes/ - [F,L]
-</IfModule>

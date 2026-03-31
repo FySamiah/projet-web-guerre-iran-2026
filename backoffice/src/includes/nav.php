@@ -19,7 +19,7 @@ $metaAuthor      = $metaAuthor ?? 'Admin';
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($pageTitle ?? 'Back-office') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/admin/assets/css/style.css">
 </head>
 <body>
 <div class="d-flex" id="wrapper">
@@ -35,32 +35,32 @@ $metaAuthor      = $metaAuthor ?? 'Admin';
 
         <ul class="nav flex-column gap-1 flex-grow-1">
             <li>
-                <a href="/dashboard.php"
+                <a href="/admin/dashboard.php"
                    class="nav-link text-white rounded <?= $currentPage === 'dashboard.php' ? 'active' : '' ?>">
                     Tableau de bord
                 </a>
             </li>
             <li>
-                <a href="/articles/list.php"
+                <a href="/admin/articles/list.php"
                    class="nav-link text-white rounded <?= str_contains($currentUri, '/articles/') ? 'active' : '' ?>">
                     Articles
                 </a>
             </li>
             <li>
-                <a href="/categories/list.php"
+                <a href="/admin/categories/list.php"
                    class="nav-link text-white rounded <?= str_contains($currentUri, '/categories/') ? 'active' : '' ?>">
                     Catégories
                 </a>
             </li>
             <li>
-                <a href="/media/list.php"
+                <a href="/admin/media/list.php"
                    class="nav-link text-white rounded <?= str_contains($currentUri, '/media/') ? 'active' : '' ?>">
                     Mediatheque
                 </a>
             </li>
             <?php if (isset($currentUser) && $currentUser['role'] === 'admin'): ?>
             <li>
-                <a href="/users/list.php"
+                <a href="/admin/users/list.php"
                    class="nav-link text-white rounded <?= str_contains($currentUri, '/users/') ? 'active' : '' ?>">
                     Utilisateurs
                 </a>
@@ -72,7 +72,7 @@ $metaAuthor      = $metaAuthor ?? 'Admin';
             <div class="text-secondary mb-2" style="font-size:12px">
                 <?= htmlspecialchars($currentUser['email']) ?>
             </div>
-            <a href="/logout.php" class="btn btn-outline-danger btn-sm w-100">
+            <a href="/admin/logout.php" class="btn btn-outline-danger btn-sm w-100">
                 Déconnexion
             </a>
         </div>

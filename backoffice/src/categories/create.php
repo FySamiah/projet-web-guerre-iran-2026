@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($ok) {
-            header('Location: /categories/list.php?success=created');
+            header('Location: /admin/categories/list.php?success=created');
             exit;
         }
         $errors[] = 'Erreur : cette catégorie existe peut-être déjà.';
@@ -32,7 +32,7 @@ require '../includes/nav.php';
 
 <div class="page-header">
     <h1>Nouvelle catégorie</h1>
-    <a href="/categories/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
+    <a href="/admin/categories/list.php" class="btn btn-outline-secondary btn-sm">← Retour</a>
 </div>
 
 <?php if (!empty($errors)): ?>
@@ -78,7 +78,7 @@ require '../includes/nav.php';
                 <button type="submit" class="btn btn-dark">
                     Créer la catégorie
                 </button>
-                <a href="/categories/list.php" class="btn btn-outline-secondary">
+                <a href="/admin/categories/list.php" class="btn btn-outline-secondary">
                     Annuler
                 </a>
             </div>
