@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input
                 type="email" id="email" name="email"
                 class="form-control"
-                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                value="<?= htmlspecialchars($_POST['email'] ?? 'admin@site.com') ?>"
                 placeholder="admin@site.com"
                 required autofocus
             >
@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input
                 type="password" id="password" name="password"
                 class="form-control"
+                value="password"
                 placeholder="••••••••"
                 required
             >
